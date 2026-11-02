@@ -149,3 +149,73 @@ test('volledige route doorloopt 152 vaste vragen en bewaart eindresultaat', asyn
   await page.locator('#confirm-restart').click();
   await expect(page.locator('h1')).toHaveText(bank[0].prompt);
 });
+
+async function resumeAt(page, index, legacy = false) {
+  await page.goto('/');
+  await page.evaluate(({ index, legacy }) => {
+    const key = 'azure-architect-progress-v1';
+    const state = JSON.parse(localStorage.getItem(key));
+    Object.assign(state, { index, feedback: null, started: true, completed: false, best: index, streak: index, usedBlockRestart: false });
+    if (legacy) { delete state.streak; delete state.usedBlockRestart; }
+    localStorage.setItem(key, JSON.stringify(state));
+  }, { index, legacy });
+  await page.reload();
+  await page.locator('#start').click();
+}
+
+test('blokherstart vanaf eerste en laatste vraag van elk blok respecteert blokgrenzen', async ({ page }) => {
+  test.setTimeout(90000);
+  let offset = 0;
+  for (const block of blocks) {
+    for (const index of [offset, offset + block.questions.length - 1]) {
+      await resumeAt(page, index);
+      await choose(page, bank[index], false);
+      await expect(page.locator('#retry-block')).toContainText(`vraag ${offset + 1}`);
+      await expect(page.locator('#retry-block')).toHaveCSS('margin-top', '12px');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+      await page.locator('#retry-block').click();
+      await expect(page.locator('h1')).toHaveText(bank[offset].prompt);
+      await expect(page.locator('.progress-label')).toContainText('0 op rij goed');
+      await expect(page.locator('progress')).toHaveAttribute('value', String(offset));
+    }
+    offset += block.questions.length;
+  }
+});
+
+test('oude sessie migreert, blokherstart blijft bewaard en record telt echte opeenvolgende antwoorden', async ({ page }) => {
+  const startIndex = blocks[0].questions.length;
+  await resumeAt(page, startIndex + 2, true);
+  await expect(page.locator('.progress-label')).toContainText(`${startIndex + 2} op rij goed`);
+  await choose(page, bank[startIndex + 2], false);
+  await page.reload();
+  await page.locator('#start').click();
+  await expect(page.locator('#feedback a')).toHaveAttribute('href', bank[startIndex + 2].source);
+  await page.locator('#retry-block').click();
+  await page.reload();
+  await page.locator('#start').click();
+  await expect(page.locator('h1')).toHaveText(bank[startIndex].prompt);
+  await choose(page, bank[startIndex]);
+  await expect(page.locator('.progress-label')).toContainText('1 op rij goed');
+  await expect(page.locator('.stat')).toContainText(`Record ${startIndex + 2}`);
+  await page.locator('#next').click();
+  await choose(page, bank[startIndex + 1], false);
+  await page.locator('#next').click();
+  await expect(page.locator('h1')).toHaveText(bank[0].prompt);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('azure-architect-progress-v1')).usedBlockRestart)).toBe(false);
+});
+
+test('voltooien met blokherstart claimt geen foutloze reeks van 152', async ({ page }) => {
+  await resumeAt(page, bank.length - 1);
+  await choose(page, bank[bank.length - 1], false);
+  await page.locator('#retry-block').click();
+  for (const q of blocks[blocks.length - 1].questions) {
+    await choose(page, q);
+    await page.locator('#next').click();
+  }
+  await expect(page.locator('.finish')).toContainText('afgerond met herstarts per blok');
+  await expect(page.locator('.finish')).not.toContainText('achter elkaar goed beantwoord');
+  await expect(page.locator('.finish-stats')).toContainText('vragen afgerond');
+  await page.reload();
+  await page.locator('#start').click();
+  await expect(page.locator('.finish')).toContainText('afgerond met herstarts per blok');
+});

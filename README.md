@@ -5,8 +5,8 @@ Een statische Nederlandstalige oefenwebsite voor Azure-architectuur, gemaakt voo
 ## Oefenregels
 
 - 152 vragen, 9 logische architectuurblokken, steeds dezelfde volgorde en antwoordposities.
-- Een fout zet de reeks direct terug op nul. Het juiste antwoord, de uitleg en een officiële Microsoft Learn-link blijven staan totdat je opnieuw begint bij vraag 1.
-- Ook goede antwoorden krijgen uitleg. Na 152 opeenvolgende juiste antwoorden volgt het eindresultaat.
+- Een fout zet de reeks direct terug op nul. Het juiste antwoord, de uitleg en een officiële Microsoft Learn-link blijven staan. Je kiest daarna tussen opnieuw beginnen bij vraag 1 of bij de eerste vraag van het huidige blok. Bij een blokherstart blijven eerder afgeronde blokken behouden.
+- Ook goede antwoorden krijgen uitleg. Na de laatste vraag volgt het eindresultaat, met vermelding of de route met blokherstarts is voltooid. Het record telt altijd uitsluitend werkelijk opeenvolgende juiste antwoorden; een fout zet de huidige reeks op nul.
 - Voortgang, ronde en record staan uitsluitend in de localStorage van deze browser. Laden met gewijzigde vragen reset de opgeslagen sessie. Als opslag niet werkt, blijft oefenen mogelijk zolang de pagina openblijft.
 - Scenario’s zijn fictief; ze beschrijven geen interne architectuur of beleid. Deze training is geen certificering of vervanging voor praktijkervaring. Toets echte ADR’s aan actuele documentatie, quota, tiers en regionale mogelijkheden.
 
