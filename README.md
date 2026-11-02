@@ -8,7 +8,7 @@ Een statische Nederlandstalige oefenwebsite voor Azure-architectuur, gemaakt voo
 - Een fout zet de reeks direct terug op nul. Het juiste antwoord, de uitleg en een officiële Microsoft Learn-link blijven staan totdat je opnieuw begint bij vraag 1.
 - Ook goede antwoorden krijgen uitleg. Na 152 opeenvolgende juiste antwoorden volgt het eindresultaat.
 - Voortgang, ronde en record staan uitsluitend in de localStorage van deze browser. Laden met gewijzigde vragen reset de opgeslagen sessie. Als opslag niet werkt, blijft oefenen mogelijk zolang de pagina openblijft.
-- Automotivescenario’s zijn fictief; ze beschrijven geen interne Mercedes-Benz-architectuur of beleid. Deze training is geen certificering of vervanging voor praktijkervaring. Toets echte ADR’s aan actuele documentatie, quota, tiers en regionale mogelijkheden.
+- Scenario’s zijn fictief; ze beschrijven geen interne architectuur of beleid. Deze training is geen certificering of vervanging voor praktijkervaring. Toets echte ADR’s aan actuele documentatie, quota, tiers en regionale mogelijkheden.
 
 ## Lokaal draaien
 
